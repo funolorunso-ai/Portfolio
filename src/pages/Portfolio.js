@@ -4,34 +4,28 @@ function Portfolio() {
   const projects = [
     {
       title: 'Snake Game',
-      description: 'A basic Snake game built with React',
-      image: 'https://via.placeholder.com/300x200',
+      description: 'Play the classic Snake game built with React - use arrow keys to move, eat food to grow, and avoid hitting walls or yourself!',
+      image: '/assets/snake.png',
       link: '/snake',
     },
     {
       title: 'Tetris Game',
-      description: 'A basic Tetris game built with React',
-      image: 'https://via.placeholder.com/300x200',
+      description: 'Experience the classic block-stacking Tetris game with modern styling - clear lines to score points and challenge yourself!',
+      image: '/assets/tetris.png',
       link: '/tetris',
     },
     {
-      title: 'E-commerce Page',
-      description: 'An e-commerce page describing a mobile software and hardware engineer',
-      image: 'https://via.placeholder.com/300x200',
+      title: 'My Portfolio Page',
+      description: 'View my complete portfolio showcasing all expertise including Software Development, Game Development, Pencil Art, and Hardware Engineering.',
+      image: '/assets/commerce.png',
       link: '/ecommerce',
-    },
-    {
-      title: 'Data Visualization Dashboard',
-      description: 'A data visualization dashboard',
-      image: 'https://via.placeholder.com/300x200',
-      link: '#',
     },
   ];
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-8 animate-fade-in">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6 text-orange-500 animate-bounce">Portfolio</h1>
+        <h1 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6 text-orange-500 animate-bounce">My Projects</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
           {projects.map((project, index) => (
             <div key={index} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 animate-fade-in-up" style={{ animationDelay: `${index * 200}ms` }}>

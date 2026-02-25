@@ -7,6 +7,8 @@ function Skills() {
     { name: 'Node.js', level: 80 },
     { name: 'CSS', level: 95 },
     { name: 'HTML', level: 100 },
+    { name: 'Game Development', level: 60 },
+    { name: 'C#', level: 45 },
   ];
 
   return (

@@ -16,7 +16,7 @@ function Header() {
         textShadow: '0 0 15px rgba(255, 69, 0, 0.8)',
         animation: 'glow 2s ease-in-out infinite alternate'
       }}>
-        Dark Fiery Webpage
+        Bigtokz
       </h1>
       <style>
         {`

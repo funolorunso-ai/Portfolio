@@ -62,7 +62,7 @@ function Body() {
           e.target.style.boxShadow = '0 0 10px rgba(255, 69, 0, 0.5)';
           e.target.style.transform = 'scale(1)';
         }}>
-          Ignite the Fire!
+          Welcome to my portfolio!
         </button>
       </div>
       <style>
