@@ -96,6 +96,18 @@ function TetrisGame() {
   const [isPaused, setIsPaused] = useState(false);
   const [highScores, setHighScores] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
+  
+  // Mobile/tablet detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Refs
   const gameLoopRef = useRef(null);
@@ -379,6 +391,12 @@ function TetrisGame() {
       maxWidth: '1200px',
       width: '100%',
     },
+    gameSection: {
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      alignItems: 'center',
+      gap: '15px',
+    },
     gameContainer: {
       position: 'relative',
       background: '#0f0f23',
@@ -511,6 +529,21 @@ function TetrisGame() {
     controlRow: {
       display: 'flex',
       gap: '10px',
+    },
+    mobileControlsWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%',
+      maxWidth: '300px',
+      marginTop: '15px',
+      marginBottom: '15px',
+    },
+    mobileControlsInline: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '5px',
     },
     startButton: {
       padding: '20px 50px',
@@ -678,37 +711,72 @@ function TetrisGame() {
         ) : (
           // Game Screen
           <div style={styles.gameWrapper}>
-            {/* Game Board */}
-            <div style={styles.gameContainer}>
-              <div style={styles.gameBoard}>
-                {renderBoard()}
+            {/* Game Section - Board + Controls on mobile */}
+            <div style={styles.gameSection}>
+              {/* Game Board */}
+              <div style={styles.gameContainer}>
+                <div style={styles.gameBoard}>
+                  {renderBoard()}
+                </div>
+
+                {/* Game Over Overlay */}
+                {gameOver && (
+                  <div style={styles.gameOverOverlay}>
+                    <div style={styles.gameOverText}>GAME OVER</div>
+                    <div style={styles.finalScore}>
+                      Lines Cleared: <span style={{ color: '#ffa500', fontWeight: 'bold' }}>{linesCleared}</span>
+                    </div>
+                    <button 
+                      style={styles.playAgainButton}
+                      onClick={resetGame}
+                      onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                      onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                    >
+                      Play Again
+                    </button>
+                  </div>
+                )}
+
+                {/* Pause Overlay */}
+                {isPaused && !gameOver && (
+                  <div style={styles.pauseOverlay}>
+                    PAUSED
+                    <div style={{ fontSize: '0.9rem', marginTop: '10px', color: '#888' }}>
+                      Press SPACE to resume
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Game Over Overlay */}
-              {gameOver && (
-                <div style={styles.gameOverOverlay}>
-                  <div style={styles.gameOverText}>GAME OVER</div>
-                  <div style={styles.finalScore}>
-                    Lines Cleared: <span style={{ color: '#ffa500', fontWeight: 'bold' }}>{linesCleared}</span>
+              {/* Mobile Controls - Beside game board on mobile */}
+              {isMobile && (
+                <div style={styles.mobileControlsInline}>
+                  <button 
+                    style={styles.controlButton}
+                    onClick={rotatePiece}
+                  >
+                    ↻ ROTATE
+                  </button>
+                  <div style={styles.controlRow}>
+                    <button 
+                      style={styles.controlButton}
+                      onClick={moveLeft}
+                    >
+                      ◀ LEFT
+                    </button>
+                    <button 
+                      style={styles.controlButton}
+                      onClick={moveRight}
+                    >
+                      RIGHT ▶
+                    </button>
                   </div>
                   <button 
-                    style={styles.playAgainButton}
-                    onClick={resetGame}
-                    onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
-                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                    style={styles.controlButton}
+                    onClick={moveDown}
                   >
-                    Play Again
+                    ▼ DOWN
                   </button>
-                </div>
-              )}
-
-              {/* Pause Overlay */}
-              {isPaused && !gameOver && (
-                <div style={styles.pauseOverlay}>
-                  PAUSED
-                  <div style={{ fontSize: '0.9rem', marginTop: '10px', color: '#888' }}>
-                    Press SPACE to resume
-                  </div>
                 </div>
               )}
             </div>
@@ -769,8 +837,8 @@ function TetrisGame() {
           </div>
         )}
 
-        {/* Mobile Controls */}
-        {isPlaying && !gameOver && (
+        {/* Desktop Controls - Show below on desktop */}
+        {isPlaying && !gameOver && !isMobile && (
           <div style={styles.controls}>
             <button 
               style={styles.controlButton}

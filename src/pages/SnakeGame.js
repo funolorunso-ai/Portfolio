@@ -218,6 +218,18 @@ function SnakeGame() {
     }
   }, [nextDirection, gameOver]);
 
+  // Mobile/tablet detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Mobile direction controls
   const handleDirectionChange = (newDir) => {
     if (gameOver) return;
@@ -253,6 +265,12 @@ function SnakeGame() {
       alignItems: 'flex-start',
       maxWidth: '1200px',
       width: '100%',
+    },
+    gameSection: {
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      alignItems: 'center',
+      gap: '15px',
     },
     gameContainer: {
       position: 'relative',
@@ -398,6 +416,21 @@ function SnakeGame() {
       display: 'flex',
       gap: '10px',
     },
+    mobileControlsWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%',
+      maxWidth: '400px',
+      marginTop: '15px',
+      marginBottom: '15px',
+    },
+    mobileControlsInline: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '5px',
+    },
     gameOverOverlay: {
       position: 'absolute',
       top: 0,
@@ -481,56 +514,91 @@ function SnakeGame() {
         <h1 style={styles.title}>🐍 SNAKE GAME</h1>
         
         <div style={styles.gameWrapper}>
-          {/* Game Board */}
-          <div style={styles.gameContainer}>
-            <div style={styles.gameBoard}>
-              {Array.from({ length: BOARD_SIZE * BOARD_SIZE }).map((_, index) => {
-                const x = index % BOARD_SIZE;
-                const y = Math.floor(index / BOARD_SIZE);
-                const isSnakeHead = snake[0]?.x === x && snake[0]?.y === y;
-                const isSnakeBody = snake.slice(1).some(segment => segment.x === x && segment.y === y);
-                const isFood = food.x === x && food.y === y;
+          {/* Game Section - Board + Controls on mobile */}
+          <div style={styles.gameSection}>
+            {/* Game Board */}
+            <div style={styles.gameContainer}>
+              <div style={styles.gameBoard}>
+                {Array.from({ length: BOARD_SIZE * BOARD_SIZE }).map((_, index) => {
+                  const x = index % BOARD_SIZE;
+                  const y = Math.floor(index / BOARD_SIZE);
+                  const isSnakeHead = snake[0]?.x === x && snake[0]?.y === y;
+                  const isSnakeBody = snake.slice(1).some(segment => segment.x === x && segment.y === y);
+                  const isFood = food.x === x && food.y === y;
 
-                let cellStyle = { ...styles.cell };
-                if (isSnakeHead) {
-                  cellStyle = { ...cellStyle, ...styles.snakeHead };
-                } else if (isSnakeBody) {
-                  cellStyle = { ...cellStyle, ...styles.snakeBody };
-                } else if (isFood) {
-                  cellStyle = { ...cellStyle, ...styles.food };
-                }
+                  let cellStyle = { ...styles.cell };
+                  if (isSnakeHead) {
+                    cellStyle = { ...cellStyle, ...styles.snakeHead };
+                  } else if (isSnakeBody) {
+                    cellStyle = { ...cellStyle, ...styles.snakeBody };
+                  } else if (isFood) {
+                    cellStyle = { ...cellStyle, ...styles.food };
+                  }
 
-                return (
-                  <div key={index} style={cellStyle} />
-                );
-              })}
+                  return (
+                    <div key={index} style={cellStyle} />
+                  );
+                })}
+              </div>
+
+              {/* Game Over Overlay */}
+              {gameOver && (
+                <div style={styles.gameOverOverlay}>
+                  <div style={styles.gameOverText}>GAME OVER</div>
+                  <div style={{ color: '#fff', marginBottom: '20px', fontSize: '1.2rem' }}>
+                    Final Score: <span style={{ color: '#00ff88', fontWeight: 'bold' }}>{score}</span>
+                  </div>
+                  <button 
+                    style={styles.playAgainButton}
+                    onClick={resetGame}
+                    onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                  >
+                    Play Again
+                  </button>
+                </div>
+              )}
+
+              {/* Pause Overlay */}
+              {isPaused && !gameOver && (
+                <div style={styles.pauseOverlay}>
+                  PAUSED
+                  <div style={{ fontSize: '0.9rem', marginTop: '10px', color: '#888' }}>
+                    Press SPACE to resume
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Game Over Overlay */}
-            {gameOver && (
-              <div style={styles.gameOverOverlay}>
-                <div style={styles.gameOverText}>GAME OVER</div>
-                <div style={{ color: '#fff', marginBottom: '20px', fontSize: '1.2rem' }}>
-                  Final Score: <span style={{ color: '#00ff88', fontWeight: 'bold' }}>{score}</span>
+            {/* Mobile Controls - Beside game board on mobile */}
+            {isMobile && (
+              <div style={styles.mobileControlsInline}>
+                <button 
+                  style={styles.controlButton}
+                  onClick={() => handleDirectionChange(DIRECTIONS.ArrowUp)}
+                >
+                  ▲ UP
+                </button>
+                <div style={styles.controlRow}>
+                  <button 
+                    style={styles.controlButton}
+                    onClick={() => handleDirectionChange(DIRECTIONS.ArrowLeft)}
+                  >
+                    ◀ LEFT
+                  </button>
+                  <button 
+                    style={styles.controlButton}
+                    onClick={() => handleDirectionChange(DIRECTIONS.ArrowRight)}
+                  >
+                    RIGHT ▶
+                  </button>
                 </div>
                 <button 
-                  style={styles.playAgainButton}
-                  onClick={resetGame}
-                  onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
-                  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                  style={styles.controlButton}
+                  onClick={() => handleDirectionChange(DIRECTIONS.ArrowDown)}
                 >
-                  Play Again
+                  ▼ DOWN
                 </button>
-              </div>
-            )}
-
-            {/* Pause Overlay */}
-            {isPaused && !gameOver && (
-              <div style={styles.pauseOverlay}>
-                PAUSED
-                <div style={{ fontSize: '0.9rem', marginTop: '10px', color: '#888' }}>
-                  Press SPACE to resume
-                </div>
               </div>
             )}
           </div>
@@ -585,7 +653,8 @@ function SnakeGame() {
           </div>
         </div>
 
-        {/* Mobile Controls */}
+        {/* Desktop Controls - Show below on desktop */}
+        {!isMobile && (
         <div style={styles.controls}>
           <button 
             style={styles.controlButton}
@@ -622,6 +691,7 @@ function SnakeGame() {
             ▼ DOWN
           </button>
         </div>
+        )}
 
         <div style={styles.instructions}>
           <p>Use <strong>Arrow Keys</strong> to move the snake</p>
