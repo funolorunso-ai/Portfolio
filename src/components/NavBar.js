@@ -18,6 +18,7 @@ function NavBar() {
     { name: 'Skills', path: '/skills' },
     { name: 'My Projects', path: '/portfolio' },
     { name: 'Contact', path: '/contact' },
+    { name: 'Reviews', path: '/reviews' },
   ];
 
   return (
@@ -84,8 +85,8 @@ function NavBar() {
             <ul className="flex flex-col space-y-3">
               {navLinks.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.path} 
+                  <Link
+                    to={link.path}
                     onClick={closeMenu}
                     className="block py-2 px-4 hover:bg-gray-700 hover:text-orange-500 rounded-lg transition duration-300"
                   >

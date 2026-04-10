@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import SnakeGame from './pages/SnakeGame';
 import TetrisGame from './pages/TetrisGame';
 import Ecommerce from './pages/Ecommerce';
+import Reviews from './pages/Reviews';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/snake" element={<SnakeGame />} />
           <Route path="/tetris" element={<TetrisGame />} />
           <Route path="/ecommerce" element={<Ecommerce />} />
+          <Route path="/reviews" element={<Reviews />} />
         </Routes>
         <Footer />
       </div>

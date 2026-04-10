@@ -13,6 +13,9 @@ logger = logging.getLogger(__name__)
 snake_highscores = []
 tetris_highscores = []
 
+# In-memory storage for reviews
+reviews = []
+
 @app.route('/contact', methods=['POST'])
 def contact():
     try:
@@ -71,6 +74,59 @@ def post_highscore(game):
         return jsonify({'message': 'Highscore submitted successfully'}), 201
     except Exception as e:
         logger.error(f"Error posting highscore for {game}: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/review', methods=['POST'])
+def receive_review():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        review = data.get('review')
+
+        if not email or not review:
+            return jsonify({'error': 'Email and review are required'}), 400
+
+        # Log the review
+        logger.info(f"New review from {email}: {review}")
+
+        # Here you could save to a database, send an email, etc.
+        # For now, just log it
+
+        return jsonify({'message': 'Review received'}), 200
+    except Exception as e:
+        logger.error(f"Error processing review: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/reviews', methods=['GET'])
+def get_reviews():
+    try:
+        return jsonify({'reviews': reviews}), 200
+    except Exception as e:
+        logger.error(f"Error retrieving reviews: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/reviews', methods=['POST'])
+def post_review():
+    try:
+        data = request.get_json()
+        name = data.get('name')
+        email = data.get('email')
+        rating = data.get('rating')
+        comment = data.get('comment')
+
+        if not name or not email or rating is None or not comment:
+            return jsonify({'error': 'Name, email, rating, and comment are required'}), 400
+
+        if not isinstance(rating, int) or rating < 1 or rating > 5:
+            return jsonify({'error': 'Rating must be an integer between 1 and 5'}), 400
+
+        new_review = {'name': name, 'email': email, 'rating': rating, 'comment': comment}
+        reviews.append(new_review)
+
+        logger.info(f"New review from {name} ({email}): {rating} stars - {comment}")
+        return jsonify({'message': 'Review submitted successfully'}), 201
+    except Exception as e:
+        logger.error(f"Error posting review: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
